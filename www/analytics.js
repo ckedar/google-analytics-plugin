@@ -1,3 +1,4 @@
+cordova.define("cordova-plugin-google-analytics.UniversalAnalytics", function(require, exports, module) {
 function UniversalAnalyticsPlugin() {}
 
 UniversalAnalyticsPlugin.prototype.startTrackerWithId = function(id, success, error) {
@@ -68,4 +69,10 @@ UniversalAnalyticsPlugin.prototype.enableUncaughtExceptionReporting = function (
   cordova.exec(success, error, 'UniversalAnalytics', 'enableUncaughtExceptionReporting', [enable]);
 };
 
+UniversalAnalyticsPlugin.prototype.getReferrer = function (success, error) {
+  cordova.exec(success, error, 'UniversalAnalytics', 'getReferrer', []);
+};
+
 module.exports = new UniversalAnalyticsPlugin();
+
+});

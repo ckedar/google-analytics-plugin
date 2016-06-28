@@ -62,7 +62,7 @@
         </intent-filter>
         </receiver>
         <service android:name="com.google.android.gms.analytics.AnalyticsService" android:enabled="true" android:exported="false"/>
-        <receiver android:name="com.google.android.gms.analytics.CampaignTrackingReceiver" android:exported="true">
+        <receiver android:name="com.danielcwilson.plugins.analytics.CustomReceiver" android:exported="true">
           <intent-filter>
             <action android:name="com.android.vending.INSTALL_REFERRER" />
           </intent-filter>
@@ -70,5 +70,6 @@
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
     </config-file>
     <source-file src="android/UniversalAnalyticsPlugin.java" target-dir="src/com/danielcwilson/plugins/analytics" />
+    <source-file src="android/CustomReceiver.java" target-dir="src/com/danielcwilson/plugins/analytics" />
   </platform>
 </plugin>

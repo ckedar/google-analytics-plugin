@@ -1,5 +1,7 @@
 package com.danielcwilson.plugins.analytics;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger.LogLevel;
 import com.google.android.gms.analytics.HitBuilders;
@@ -30,11 +32,14 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
     public static final String DEBUG_MODE = "debugMode";
     public static final String ENABLE_UNCAUGHT_EXCEPTION_REPORTING = "enableUncaughtExceptionReporting";
 
+    public static final String GET_REFERRER = "getReferrer";
+
     public Boolean trackerStarted = false;
     public Boolean debugModeEnabled = false;
     public HashMap<Integer, String> customDimensions = new HashMap<Integer, String>();
 
     public Tracker tracker;
+    public static String referrer = "NONE";
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
@@ -108,6 +113,8 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
         } else if (ENABLE_UNCAUGHT_EXCEPTION_REPORTING.equals(action)) {
             Boolean enable = args.getBoolean(0);
             this.enableUncaughtExceptionReporting(enable, callbackContext);
+        } else if(GET_REFERRER.equals(action)) {
+            this.getReferrer(callbackContext);
         }
         return false;
     }
@@ -128,12 +135,12 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
             callbackContext.error("Expected positive integer argument for key.");
             return;
         }
-    	
+        
         if (null == value || value.length() == 0) {
             callbackContext.error("Expected non-empty string argument for value.");
             return;
         }
-    		
+            
         customDimensions.put(key, value);
         callbackContext.success("custom dimension started");
     }
@@ -143,16 +150,16 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
         //the common setCustomDimension (int index, String dimension) method
         try {
             Method builderMethod = builder.getClass().getMethod("setCustomDimension", Integer.TYPE, String.class);
-	    	
+            
             for (Entry<Integer, String> entry : customDimensions.entrySet()) {
-	            Integer key = entry.getKey();
-	            String value = entry.getValue();
-	            try {
-	                builderMethod.invoke(builder, (key), value);
-	            } catch (IllegalArgumentException e) {
-	            } catch (IllegalAccessException e) {
-	            } catch (InvocationTargetException e) {
-	            }
+                Integer key = entry.getKey();
+                String value = entry.getValue();
+                try {
+                    builderMethod.invoke(builder, (key), value);
+                } catch (IllegalArgumentException e) {
+                } catch (IllegalAccessException e) {
+                } catch (InvocationTargetException e) {
+                }
             }
         } catch (SecurityException e) {
         } catch (NoSuchMethodException e) {
@@ -210,7 +217,7 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
         if (null != description && description.length() > 0) {
             HitBuilders.ExceptionBuilder hitBuilder = new HitBuilders.ExceptionBuilder();
             addCustomDimensionsToHitBuilder(hitBuilder);
-        	
+            
             tracker.send(hitBuilder
                     .setDescription(description)
                     .setFatal(fatal)
@@ -231,7 +238,7 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
         if (null != category && category.length() > 0) {
             HitBuilders.TimingBuilder hitBuilder = new HitBuilders.TimingBuilder();
             addCustomDimensionsToHitBuilder(hitBuilder);
-        	
+            
             tracker.send(hitBuilder
                     .setCategory(category)
                     .setValue(intervalInMilliseconds)
@@ -254,7 +261,7 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
         if (null != id && id.length() > 0) {
             HitBuilders.TransactionBuilder hitBuilder = new HitBuilders.TransactionBuilder();
             addCustomDimensionsToHitBuilder(hitBuilder);
-        	
+            
             tracker.send(hitBuilder
                     .setTransactionId(id)
                     .setAffiliation(affiliation)
@@ -320,5 +327,13 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
 
         tracker.enableExceptionReporting(enable);
         callbackContext.success((enable ? "Enabled" : "Disabled") + " uncaught exception reporting");
+    }
+
+    private void getReferrer(CallbackContext callbackContext) {
+/*
+        final SharedPreferences sharedPreferences = cordova.getActivity().getSharedPreferences("com.rapidue.uzed.referrer", Context.MODE_PRIVATE);
+        final String referrer = sharedPreferences.getString("referrer", "none");
+*/
+        callbackContext.success(referrer);
     }
 }
