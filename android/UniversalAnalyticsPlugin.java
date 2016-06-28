@@ -39,7 +39,7 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
     public HashMap<Integer, String> customDimensions = new HashMap<Integer, String>();
 
     public Tracker tracker;
-    public static String referrer = "NONE";
+    public static String referrer = null;
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
