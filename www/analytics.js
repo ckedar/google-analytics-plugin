@@ -1,4 +1,3 @@
-cordova.define("cordova-plugin-google-analytics.UniversalAnalytics", function(require, exports, module) {
 function UniversalAnalyticsPlugin() {}
 
 UniversalAnalyticsPlugin.prototype.startTrackerWithId = function(id, success, error) {
@@ -74,5 +73,3 @@ UniversalAnalyticsPlugin.prototype.getReferrer = function (success, error) {
 };
 
 module.exports = new UniversalAnalyticsPlugin();
-
-});
