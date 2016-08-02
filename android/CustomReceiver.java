@@ -3,6 +3,7 @@ package com.danielcwilson.plugins.analytics;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -27,12 +28,11 @@ public class CustomReceiver extends BroadcastReceiver {
     final String referrer = bundle.getString("referrer");
 
     UniversalAnalyticsPlugin.referrer = referrer;
-/*
+
     final SharedPreferences sharedPreferences = context.getSharedPreferences("com.rapidue.uzed.referrer", Context.MODE_PRIVATE);
     final SharedPreferences.Editor editor = sharedPreferences.edit();
     editor.putString("referrer", referrer);
     final boolean b = editor.commit();
-*/
 
     // Pass the intent to other receivers.
 

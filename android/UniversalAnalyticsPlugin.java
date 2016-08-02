@@ -330,10 +330,8 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
     }
 
     private void getReferrer(CallbackContext callbackContext) {
-/*
         final SharedPreferences sharedPreferences = cordova.getActivity().getSharedPreferences("com.rapidue.uzed.referrer", Context.MODE_PRIVATE);
-        final String referrer = sharedPreferences.getString("referrer", "none");
-*/
+        final String referrer = sharedPreferences.getString("referrer", null);
         callbackContext.success(referrer);
     }
 }
