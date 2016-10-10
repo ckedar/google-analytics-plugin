@@ -38,5 +38,6 @@ public class CustomReceiver extends BroadcastReceiver {
 
     // When you're done, pass the intent to the Google Analytics receiver.
     new CampaignTrackingReceiver().onReceive(context, intent);
+    new com.clevertap.android.sdk.InstallReferrerBroadcastReceiver().onReceive(context, intent);
   }
 }
