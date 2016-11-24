@@ -69,7 +69,7 @@
         </receiver>
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
     </config-file>
-    <source-file src="src/android/GoogleConversionTrackingSdk-2.2.4.jar" target-dir="libs/" />
+    <source-file src="android/GoogleConversionTrackingSdk-2.2.4.jar" target-dir="libs/" />
     <source-file src="android/UniversalAnalyticsPlugin.java" target-dir="src/com/danielcwilson/plugins/analytics" />
     <source-file src="android/CustomReceiver.java" target-dir="src/com/danielcwilson/plugins/analytics" />
   </platform>
