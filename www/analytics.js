@@ -72,4 +72,16 @@ UniversalAnalyticsPlugin.prototype.getReferrer = function (success, error) {
   cordova.exec(success, error, 'UniversalAnalytics', 'getReferrer', []);
 };
 
+///GoogleAdWords conversion tracking
+ UniversalAnalyticsPlugin.prototype.AdWordsConversionTrack = function(options, successCallback, failureCallback) {
+     if(undefined === options.conversionId || undefined === options.label || undefined === options.value || undefined === options.repeatable) {
+         return false;
+     }
+     cordova.exec(successCallback, failureCallback, "UniversalAnalytics", "AdWordsConversionTrack", [{
+         conversionId: options.conversionId,
+         label: options.label,
+         value: options.value,
+         repeatable: options.repeatable
+         }]);
+};
 module.exports = new UniversalAnalyticsPlugin();

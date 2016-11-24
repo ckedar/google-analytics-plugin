@@ -2,6 +2,9 @@ package com.danielcwilson.plugins.analytics;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
+
+import com.google.ads.conversiontracking.AdWordsConversionReporter;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger.LogLevel;
 import com.google.android.gms.analytics.HitBuilders;
@@ -33,6 +36,8 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
     public static final String ENABLE_UNCAUGHT_EXCEPTION_REPORTING = "enableUncaughtExceptionReporting";
 
     public static final String GET_REFERRER = "getReferrer";
+
+    public static final String ADWORDS_CONVERSION_TRACK = "AdWordsConversionTrack";
 
     public Boolean trackerStarted = false;
     public Boolean debugModeEnabled = false;
@@ -115,6 +120,8 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
             this.enableUncaughtExceptionReporting(enable, callbackContext);
         } else if(GET_REFERRER.equals(action)) {
             this.getReferrer(callbackContext);
+        }else if(ADWORDS_CONVERSION_TRACK.equals(action)){
+            this.AdWordsConversionTrack(args, callbackContext);
         }
         return false;
     }
@@ -135,12 +142,12 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
             callbackContext.error("Expected positive integer argument for key.");
             return;
         }
-        
+
         if (null == value || value.length() == 0) {
             callbackContext.error("Expected non-empty string argument for value.");
             return;
         }
-            
+
         customDimensions.put(key, value);
         callbackContext.success("custom dimension started");
     }
@@ -150,7 +157,7 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
         //the common setCustomDimension (int index, String dimension) method
         try {
             Method builderMethod = builder.getClass().getMethod("setCustomDimension", Integer.TYPE, String.class);
-            
+
             for (Entry<Integer, String> entry : customDimensions.entrySet()) {
                 Integer key = entry.getKey();
                 String value = entry.getValue();
@@ -174,10 +181,10 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
 
         if (null != screenname && screenname.length() > 0) {
             tracker.setScreenName(screenname);
-            
+
             HitBuilders.AppViewBuilder hitBuilder = new HitBuilders.AppViewBuilder();
             addCustomDimensionsToHitBuilder(hitBuilder);
-            
+
             tracker.send(hitBuilder.build());
             callbackContext.success("Track Screen: " + screenname);
         } else {
@@ -194,7 +201,7 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
         if (null != category && category.length() > 0) {
             HitBuilders.EventBuilder hitBuilder = new HitBuilders.EventBuilder();
             addCustomDimensionsToHitBuilder(hitBuilder);
-            
+
             tracker.send(hitBuilder
                     .setCategory(category)
                     .setAction(action)
@@ -217,7 +224,7 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
         if (null != description && description.length() > 0) {
             HitBuilders.ExceptionBuilder hitBuilder = new HitBuilders.ExceptionBuilder();
             addCustomDimensionsToHitBuilder(hitBuilder);
-            
+
             tracker.send(hitBuilder
                     .setDescription(description)
                     .setFatal(fatal)
@@ -238,7 +245,7 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
         if (null != category && category.length() > 0) {
             HitBuilders.TimingBuilder hitBuilder = new HitBuilders.TimingBuilder();
             addCustomDimensionsToHitBuilder(hitBuilder);
-            
+
             tracker.send(hitBuilder
                     .setCategory(category)
                     .setValue(intervalInMilliseconds)
@@ -261,7 +268,7 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
         if (null != id && id.length() > 0) {
             HitBuilders.TransactionBuilder hitBuilder = new HitBuilders.TransactionBuilder();
             addCustomDimensionsToHitBuilder(hitBuilder);
-            
+
             tracker.send(hitBuilder
                     .setTransactionId(id)
                     .setAffiliation(affiliation)
@@ -318,7 +325,7 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
         tracker.set("&uid", userId);
         callbackContext.success("Set user id" + userId);
     }
-    
+
     private void enableUncaughtExceptionReporting(Boolean enable, CallbackContext callbackContext) {
         if (! trackerStarted ) {
             callbackContext.error("Tracker not started");
@@ -333,5 +340,24 @@ public class UniversalAnalyticsPlugin extends CordovaPlugin {
         final SharedPreferences sharedPreferences = cordova.getActivity().getSharedPreferences("com.rapidue.uzed.referrer", Context.MODE_PRIVATE);
         final String referrer = sharedPreferences.getString("referrer", null);
         callbackContext.success(referrer);
+    }
+   /*Start GoogleAdWordsCOnversion Tracking Event*/
+    private void AdWordsConversionTrack(JSONArray inputs, CallbackContext callbackContext) {
+            Log.i("GoogleAdWords", inputs.toString());
+        try {
+            AdWordsConversionReporter.reportWithConversionId(
+                    this.cordova.getActivity().getApplicationContext(),
+                    inputs.getJSONObject(0).getString("conversionId"),
+                    inputs.getJSONObject(0).getString("label"),
+                    inputs.getJSONObject(0).getString("value"),  // The value of your conversion; can be modified to a transaction-specific value.
+                    Boolean.parseBoolean(inputs.getJSONObject(0).getString("repeatable"))
+            );
+
+            callbackContext.success();
+        } catch (JSONException e) {
+            Log.d("Cordova Plugin Error", e.getMessage());
+            e.printStackTrace();
+            callbackContext.error("Unable to send tracking data");
+        }
     }
 }
