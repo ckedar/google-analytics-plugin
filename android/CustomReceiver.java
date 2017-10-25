@@ -41,5 +41,6 @@ public class CustomReceiver extends BroadcastReceiver {
     new CampaignTrackingReceiver().onReceive(context, intent);
     new com.clevertap.android.sdk.InstallReferrerBroadcastReceiver().onReceive(context, intent);
     AdWordsConversionReporter.registerReferrer(context, intent.getData());
+    new io.branch.referral.InstallListener().onReceive(context, intent);
   }
 }
